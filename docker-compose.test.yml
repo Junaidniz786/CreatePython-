@@ -1,0 +1,30 @@
+version: '3.5'
+services:
+  pnews-test:
+    image: aabor/nbdatascience
+    environment:
+      - TZ="Europe/Kiev"
+    volumes:
+      - $PWD:/home/jovyan/nginx-flask-plumber
+    working_dir: /home/jovyan/nginx-flask-plumber
+    command: bash -c "pwd && pytest --junitxml pnews/test-reports/pnews.xml pnews/test_pnews.py"
+    networks: 
+      - front-end
+      - selenium-hub
+  rnews-test:
+    image: aabor/rstudio
+    environment:
+      - TZ="Europe/Kiev"
+      - WERKZEUG_DEBUG_PIN=off
+    volumes:
+      - $PWD:/home/rstudio/nginx-flask-plumber      
+    working_dir: /home/rstudio/nginx-flask-plumber
+    command: bash -c "pwd && Rscript --verbose rnews/tests/run-tests.R"
+    networks: 
+      - front-end
+networks: 
+    front-end:
+      external: true
+    selenium-hub:
+      external: true
+
